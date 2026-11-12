@@ -1,0 +1,6 @@
+{
+  "name": "HubShark Client",
+  "description": "Android VPN client for personal HubShark Codespaces testing.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}

@@ -1,0 +1,23 @@
+{
+  "default_codespace_id": "primary",
+  "codespaces": [
+    {
+      "id": "primary",
+      "label": "Primary Codespace",
+      "name": "your-primary-codespace-name",
+      "token_binding": "GITHUB_TOKEN_PRIMARY",
+      "route_ports": [443],
+      "priority": 10,
+      "enabled": true
+    },
+    {
+      "id": "quota-standby",
+      "label": "Quota Standby",
+      "name": "your-standby-codespace-name",
+      "token_binding": "GITHUB_TOKEN_STANDBY",
+      "route_ports": [443],
+      "priority": 20,
+      "enabled": true
+    }
+  ]
+}

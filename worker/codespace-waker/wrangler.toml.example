@@ -1,0 +1,37 @@
+name = "hubshark-codespace-waker"
+main = "src/index.js"
+compatibility_date = "2026-08-20"
+
+[observability]
+enabled = true
+head_sampling_rate = 1
+
+[vars]
+# Example: your-codespace-slug
+CODESPACE_NAME = "YOUR_CODESPACE_NAME"
+
+# Optional when the panel uses a non-default XRAY_PORT.
+# CODESPACE_PORT = "443"
+
+# Optional browser/API retry hint while the XHTTP route is settling.
+# ROUTE_POLL_AFTER_SECONDS = "5"
+
+# Sample unchanged quota-incident metadata instead of writing on every Health poll.
+# QUOTA_INCIDENT_SAMPLE_MS = "900000"
+
+# Optional successful-wake cooldown. Requires WAKER_KV.
+# WAKE_COOLDOWN_SECONDS = "60"
+
+# Optional quota-survival Cron gate. Only set true after adding a Cron Trigger.
+# QUOTA_SURVIVAL_CRON_ENABLED = "false"
+
+# Optional KV history. Create a KV namespace, then uncomment and set the id.
+# [[kv_namespaces]]
+# binding = "WAKER_KV"
+# id = "YOUR_KV_NAMESPACE_ID"
+
+# Multi-Codespace mode: uncomment this and the KV binding above, then put the
+# registry JSON from codespaces.registry.example.json into KV key
+# codespace-registry:v1. Give every registry token_binding its own Worker
+# secret, for example GITHUB_TOKEN_PRIMARY and GITHUB_TOKEN_STANDBY.
+# MULTI_CODESPACE_REGISTRY = "true"

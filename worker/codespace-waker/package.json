@@ -1,0 +1,14 @@
+{
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "node --check src/index.js && node --check scripts/dry-run.mjs && node --check scripts/verify-deploy-config.mjs",
+    "test": "node ../../tests/worker_behavior_tests.mjs",
+    "dry-run": "node scripts/dry-run.mjs",
+    "predeploy": "node scripts/verify-deploy-config.mjs",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "4.110.0"
+  }
+}

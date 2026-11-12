@@ -1,0 +1,45 @@
+{
+  "name": "Hubshark-Codespace",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": "."
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": false
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/sshd:1": {
+      "version": "latest"
+    }
+  },
+  "postStartCommand": "bash ./scripts/post-start.sh",
+  "postAttachCommand": "bash ./hubshark.sh",
+  "portsAttributes": {
+    "443": {
+      "label": "hubshark-vless",
+      "protocol": "http",
+      "onAutoForward": "silent",
+      "visibility": "public"
+    },
+    "8443": {
+      "label": "hubshark-ws-fallback",
+      "protocol": "http",
+      "onAutoForward": "silent",
+      "visibility": "public"
+    }
+  },
+  "forwardPorts": [443, 8443],
+  "hostRequirements": {
+    "cpus": 2
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash"
+      }
+    }
+  }
+}

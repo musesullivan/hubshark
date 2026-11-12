@@ -1,0 +1,90 @@
+name: Static Tests
+
+on:
+  push:
+    paths-ignore:
+      - "assets/**"
+  pull_request:
+    paths-ignore:
+      - "assets/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: static-tests-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  fast-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      LC_ALL: C.UTF-8
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js for Worker tooling
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: worker/codespace-waker/package-lock.json
+
+      - name: Install Worker dependencies
+        working-directory: worker/codespace-waker
+        run: npm ci
+
+      - name: Syntax check panel
+        run: |
+          bash -n ./hubshark.sh
+          bash -n ./scripts/post-start.sh
+          bash -n ./tests/hubshark_static_tests.sh
+          bash -n ./tests/hubshark_behavior_tests.sh
+
+      - name: Syntax check Worker
+        working-directory: worker/codespace-waker
+        run: npm run check
+
+      - name: Run static regression tests
+        run: bash ./tests/hubshark_static_tests.sh
+
+      - name: Run behavior regression tests
+        run: bash ./tests/hubshark_behavior_tests.sh
+
+      - name: Run Worker behavior tests
+        working-directory: worker/codespace-waker
+        run: npm test
+
+      - name: Run deterministic benchmark budgets
+        run: bash ./hubshark.sh bench --json --mock
+
+  extended-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: fast-tests
+    env:
+      LC_ALL: C.UTF-8
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js for Worker tooling
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: worker/codespace-waker/package-lock.json
+
+      - name: ShellCheck critical issues
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck
+          shellcheck -S error ./hubshark.sh ./scripts/post-start.sh ./tests/*.sh
+
+      - name: Wrangler dry-run bundle check
+        working-directory: worker/codespace-waker
+        run: |
+          npm ci
+          npm run dry-run

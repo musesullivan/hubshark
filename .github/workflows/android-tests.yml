@@ -1,0 +1,65 @@
+name: Android Tests
+
+on:
+  push:
+    paths:
+      - "hubshark_app/**"
+      - ".github/workflows/android-tests.yml"
+  pull_request:
+    paths:
+      - "hubshark_app/**"
+      - ".github/workflows/android-tests.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  native-payload-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+      - name: Verify upstream payload counters and engine restart cleanup
+        run: bash ./hubshark_app/scripts/test-hev-payload.sh
+
+  source-checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: hubshark_app
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+      - name: Check Unix Gradle wrapper
+        run: |
+          test -x ./gradlew
+          unzip -t -q gradle/wrapper/gradle-wrapper.jar
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: gradle
+          cache-dependency-path: |
+            hubshark_app/**/*.gradle*
+            hubshark_app/gradle.properties
+            hubshark_app/gradle/libs.versions.toml
+            hubshark_app/gradle/wrapper/gradle-wrapper.properties
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v4
+        with:
+          packages: "platform-tools platforms;android-36.1 build-tools;36.0.0"
+          log-accepted-android-sdk-licenses: false
+      - name: Test source and verify native build inputs
+        run: >-
+          bash ./gradlew :app:testDebugUnitTest :app:lintDebug
+          :app:compileDebugAndroidTestKotlin
+          :app:verifyHevBundle :app:verifyLibXrayBuildContract
+          --no-daemon --console=plain
