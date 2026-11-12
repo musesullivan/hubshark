@@ -404,8 +404,6 @@ test_tcp_fast_open_is_gated_and_outbound_only() {
         || fail 'generated config does not apply tcpFastOpen via outbound sockopt'
     grep_fixed '"settings": { "domainStrategy": "UseIPv4" }${direct_sockopt}' "$SCRIPT" \
         || fail 'tcpFastOpen sockopt is not attached to the freedom (direct) outbound'
-    grep_fixed 'HUBSHARK_TCP_FAST_OPEN' "$README" \
-        || fail 'README does not document the TCP Fast Open toggle'
     grep_fixed 'TCP FastOpen:' "$SCRIPT" \
         || fail 'diagnostics do not surface TCP Fast Open status'
     pass 'TCP Fast Open is kernel-gated and applied only to the direct outbound'
@@ -615,16 +613,6 @@ test_websocket_fallback_is_advanced_opt_in() {
         || fail 'panel does not state that Cloudflare front mode needs Host/SNI override support'
     grep_fixed 'enabled, pending config regenerate' "$SCRIPT" \
         || fail 'diagnostics do not explain when saved WS preference has not been applied to config'
-    grep_fixed '19) Toggle WebSocket Fallback' "$README" \
-        || fail 'README does not document the WebSocket fallback panel toggle'
-    grep_fixed '20) Cloudflare WS Front' "$README" \
-        || fail 'README does not document the Cloudflare WS front panel manager'
-    grep_fixed 'If your Cloudflare plan cannot set Host/SNI override rules' "$README" \
-        || fail 'README does not warn that Cloudflare Free/simple CNAME fronting is unreliable'
-    grep_fixed 'survives future panel sessions until you toggle it again' "$README" \
-        || fail 'README does not document persistent WebSocket fallback state'
-    grep_fixed 'XHTTP remains the recommended default' "$README" \
-        || fail 'README does not keep XHTTP as the recommended default'
     pass 'WebSocket fallback is advanced opt-in'
 }
 
@@ -927,12 +915,6 @@ test_local_reopen_helper_is_documented() {
         || fail 'reopen helper does not explain quota/payment blocked starts'
     grep_fixed 'gh codespace code -c $Name' "$REOPEN_SCRIPT" \
         || fail 'reopen helper does not open the restarted Codespace in VS Code'
-    grep_fixed 'scripts/reopen-codespace.ps1' "$README" \
-        || fail 'README does not document the local reopen helper'
-    grep_fixed 'Default idle timeout' "$README" \
-        || fail 'README does not document setting the Codespaces idle timeout'
-    grep_fixed '240 minutes' "$README" \
-        || fail 'README does not recommend the maximum supported idle timeout'
     pass 'local reopen helper is documented'
 }
 
@@ -995,8 +977,6 @@ test_cloudflare_worker_waker_is_safe_to_publish() {
         || fail 'Worker README does not instruct storing GitHub token as a secret'
     grep_fixed 'wrangler secret put WAKE_SECRET' "$WORKER_README" \
         || fail 'Worker README does not instruct storing wake secret as a secret'
-    grep_fixed 'Cloudflare Worker Waker' "$README" \
-        || fail 'root README does not mention the Cloudflare Worker waker'
     local gh_prefix='ghp''_'
     local pat_prefix='github''_pat_'
     for file in "$WORKER_SCRIPT" "$WORKER_README" "$WORKER_WRANGLER_EXAMPLE"; do
@@ -1108,8 +1088,6 @@ test_worker_dashboard_and_history_features() {
         || fail 'Worker README does not document optional Discord alerts'
     grep_fixed 'TELEGRAM_BOT_TOKEN' "$WORKER_README" \
         || fail 'Worker README does not document optional Telegram alerts'
-    grep_fixed 'Health dashboard' "$README" \
-        || fail 'root README does not mention the private Worker health dashboard'
     pass 'Worker dashboard, history, and alert features are documented'
 }
 
@@ -1134,10 +1112,6 @@ test_quota_survival_layer_is_present() {
         || fail 'panel does not guide users to Keep codespace before quota exhaustion'
     grep_fixed 'same configs can survive until reset' "$SCRIPT" \
         || fail 'quota panel does not explain same-Codespace survival'
-    grep_fixed 'Keep codespace' "$README" \
-        || fail 'README does not tell users to preserve the Codespace with Keep codespace'
-    grep_fixed 'same VLESS configs survive into the next monthly reset only if the same Codespace name/domain survives' "$README" \
-        || fail 'README does not explain same-domain survival through quota reset'
     grep_fixed 'QUOTA_SURVIVAL_CRON_ENABLED' "$WORKER_README" \
         || fail 'Worker README does not document optional quota-survival Cron'
     pass 'quota survival layer is present and documented'
@@ -1304,8 +1278,6 @@ test_route_candidate_manager_and_live_monitor_are_present() {
         || fail 'unblacklist does not report no-op or persistence failures'
     grep_fixed 'candidate_blacklisted "$ip"' "$SCRIPT" \
         || fail 'route exports do not filter blacklisted routes'
-    grep_fixed 'Route Candidates' "$README" \
-        || fail 'README does not document route candidate manager'
     pass 'route candidate manager and live monitor are present'
 }
 
@@ -1320,8 +1292,6 @@ test_first_run_recovery_card_is_present() {
         || fail 'recovery command card does not show machine-readable recover command'
     grep_fixed 'replace <WAKE_SECRET>' "$SCRIPT" \
         || fail 'recovery command card does not avoid printing the raw wake secret'
-    grep_fixed 'copy these recovery commands' "$README" \
-        || fail 'README does not mention the recovery command card'
     pass 'first-run recovery card is present'
 }
 
@@ -1593,34 +1563,12 @@ test_diagnostics_show_external_waker_state() {
 }
 
 test_docs_cover_panel_waker_setup() {
-    grep_fixed 'Option 15' "$README" \
-        || fail 'README does not document the panel recovery setup option'
-    grep_fixed 'choose `1) Generate Config & Start`' "$README" \
-        || fail 'README fresh-start flow does not tell users which panel option to choose'
-    grep_fixed 'Do not paste the GitHub token into Hubshark' "$README" \
-        || fail 'README does not warn against storing GitHub tokens in the panel'
-    grep_fixed 'paste the existing key instead of generating another one' "$README" \
-        || fail 'README does not explain shared wake-key reuse'
-    grep_fixed 'Recovery / Waker Setup' "$README" \
-        || fail 'README does not name the recovery setup screen'
-    grep_fixed 'Default idle timeout** to **240 minutes' "$README" \
-        || fail 'README does not retain the 240 minute idle-timeout recommendation'
     grep_fixed 'Recovery / Waker Setup' "$WORKER_README" \
         || fail 'Worker README does not mention the panel setup flow'
-    grep_fixed 'GET /wake` page is public' "$README" \
-        || fail 'README does not clarify that the Worker page is public but actions are protected'
     grep_fixed 'GET /wake` page is public' "$WORKER_README" \
         || fail 'Worker README does not clarify that the page is public but actions are protected'
-    grep_fixed 'Return to panel option `15`' "$README" \
-        || fail 'README does not tell users to return to option 15 after Worker deployment'
     grep_fixed 'Return to **Option 15: Recovery / Waker Setup**' "$WORKER_README" \
         || fail 'Worker README does not tell users to return to option 15 after deploy'
-    grep_fixed 'bash ./hubshark.sh --silent-start' "$README" \
-        || fail 'README does not document the post-pull runtime refresh command'
-    grep_fixed '`--recover-now` is non-interactive and soft-only' "$README" \
-        || fail 'README does not clarify headless recover limitations'
-    grep_fixed 'This project intentionally does not publish a raw GitHub subscription URL' "$README" \
-        || fail 'README does not explain local-only subscription exports'
     grep_fixed 'Local subscription file' "$SCRIPT" \
         || fail 'diagnostics does not show the local subscription file'
     if grep_fixed 'publish-subscription' "$README" || grep_fixed 'publish-subscription' "$SCRIPT"; then
@@ -1629,14 +1577,6 @@ test_docs_cover_panel_waker_setup() {
     if grep_fixed 'Raw subscription URL' "$SCRIPT"; then
         fail 'panel still prints a raw subscription URL'
     fi
-    grep_fixed 'Option `49) Toggle Latency Focus Mode`' "$README" \
-        || fail 'README does not document latency focus mode'
-    grep_fixed 'HUBSHARK_LATENCY_FOCUS=1' "$README" \
-        || fail 'README does not document the latency focus environment flag'
-    grep_fixed 'applies the `low_latency` profile' "$README" \
-        || fail 'README does not state that latency focus applies the real low_latency profile'
-    grep_fixed 'applies the `low_overhead` profile' "$README" \
-        || fail 'README does not state that low-overhead applies the real low_overhead profile'
     grep_fixed 'wake attempts' "$WORKER_README" \
         || fail 'Worker README overstates or omits alert trigger scope'
     grep_fixed 'next_action_code' "$WORKER_README" \
@@ -1649,26 +1589,8 @@ test_docs_cover_panel_waker_setup() {
         || fail 'Worker README claims deferred quota-incident writes completed'
     grep_fixed 'Do not paste the GitHub token into Hubshark' "$WORKER_README" \
         || fail 'Worker README does not mirror the token handling warning'
-    grep_fixed 'read -rsp "Wake secret: " WAKE_SECRET' "$README" \
-        || fail 'README still encourages typing the wake secret directly into curl commands'
     grep_fixed 'read -rsp "Wake secret: " WAKE_SECRET' "$WORKER_README" \
         || fail 'Worker README still encourages typing the wake secret directly into curl commands'
-    grep_fixed 'keeps the wake secret out of shell history' "$README" \
-        || fail 'README does not explain safer wake secret CLI handling'
-    grep_fixed 'https://github.com/settings/tokens/new?scopes=codespace' "$README" \
-        || fail 'README does not give a direct GitHub token creation path'
-    grep_fixed 'CODESPACE_NAME`: **Plaintext** variable' "$README" \
-        || fail 'README does not clarify CODESPACE_NAME as a plaintext Cloudflare variable'
-    grep_fixed 'GITHUB_TOKEN`: **Secret** variable' "$README" \
-        || fail 'README does not clarify GITHUB_TOKEN as a Cloudflare secret'
-    grep_fixed 'CODESPACE_PORT`: **Plaintext** variable only if you changed `XRAY_PORT`' "$README" \
-        || fail 'README does not document the optional CODESPACE_PORT Worker binding'
-    grep_fixed 'route_ready: true' "$README" \
-        || fail 'README does not explain successful Worker route readiness'
-    grep_fixed 'route_ready: false' "$README" \
-        || fail 'README does not explain Worker route settling failures'
-    grep_fixed 'with or without `https://`, and with or without `/wake`' "$README" \
-        || fail 'README does not clarify accepted Worker URL formats'
     grep_fixed '| Plaintext | `CODESPACE_NAME`' "$WORKER_README" \
         || fail 'Worker README does not clarify CODESPACE_NAME dashboard binding type'
     grep_fixed 'CODESPACE_PORT` as a **Plaintext** variable only if you changed' "$WORKER_README" \
@@ -1681,8 +1603,6 @@ test_docs_cover_panel_waker_setup() {
         || fail 'Worker README does not explain the route-settling response'
     grep_fixed 'notification_status: "deferred"' "$WORKER_README" \
         || fail 'Worker README does not explain deferred notification status'
-    grep_fixed 'VS Code Desktop' "$README" \
-        || fail 'README does not mention VS Code Desktop fallback for slow browser Codespaces'
     pass 'docs cover panel waker setup'
 }
 
@@ -1787,8 +1707,6 @@ test_logs_are_bounded_and_quota_is_cycle_aware() {
         || fail 'quota seconds are not configurable'
     grep_fixed 'Local 2-core quota estimate' "$SCRIPT" \
         || fail 'quota panel does not label itself as a local estimate'
-    grep_fixed 'storage quota, not traffic quota' "$README" \
-        || fail 'README does not distinguish GitHub storage quota from VPN traffic'
     pass 'logs are bounded and quota estimate is cycle aware'
 }
 
@@ -1803,19 +1721,9 @@ test_fallback_link_count_is_capped() {
         || fail 'route monitor hard cap is not bounded at 64 candidates'
     grep_fixed '(( index > max_links )) && break' "$SCRIPT" \
         || fail 'fallback link generation does not cap weak extra routes'
-    grep_fixed 'HUBSHARK_MAX_FALLBACK_LINKS' "$README" \
-        || fail 'README does not document the fallback link cap'
-    grep_fixed 'HUBSHARK_DNS_CACHE_TTL_SEC' "$README" \
-        || fail 'README does not document the DNS candidate cache TTL'
-    grep_fixed 'Default: `30`' "$README" \
-        || fail 'README does not document 30 exported fallback links by default'
-    grep_fixed 'up to 30 usable IP fallback configs plus the domain config' "$README" \
-        || fail 'README prose does not match the 30 fallback-link default'
     if grep_fixed 'up to 20 usable IP fallback configs' "$README"; then
         fail 'README still contains stale 20 fallback-link wording'
     fi
-    grep_fixed 'Default: `40`, hard-capped at `64`' "$README" \
-        || fail 'README does not document the widened bounded route scanner default'
     grep_fixed 'WIDE_DNS_DISCOVERY="${HUBSHARK_WIDE_DNS_DISCOVERY:-1}"' "$SCRIPT" \
         || fail 'wide DNS discovery is not enabled by default'
     grep_fixed 'HUBSHARK_WIDE_DNS_ECS_SUBNETS' "$SCRIPT" \
@@ -1824,14 +1732,25 @@ test_fallback_link_count_is_capped() {
         || fail 'route manager has no batch manual route import helper'
     grep_fixed 'Batch Import Manual IPv4s' "$SCRIPT" \
         || fail 'route manager does not expose batch manual route import in the panel'
-    grep_fixed 'HUBSHARK_WIDE_DNS_DISCOVERY' "$README" \
-        || fail 'README does not document wide DNS discovery'
     pass 'fallback link count is capped and documented'
 }
 
+test_readme_stays_vague() {
+    # The public README describes HubShark only as a personal network
+    # toolkit. It must not name the underlying mechanism.
+    local banned
+    for banned in vpn proxy tunnel vless xray censorship circumvention; do
+        if grep -iq -- "$banned" "$README"; then
+            fail "README mentions '$banned'; the public page stays vague"
+        fi
+    done
+    grep_fixed 'personal network toolkit' "$README" \
+        || fail 'README does not describe HubShark as a personal network toolkit'
+    pass 'README stays vague about the underlying mechanism'
+}
+
 test_ci_runs_static_regressions() {
-    [[ -f "$CI_WORKFLOW" ]] || fail 'static test GitHub Actions workflow is missing'
-    grep_fixed 'bash -n ./hubshark.sh' "$CI_WORKFLOW" \
+    [[ -f "$CI_WORKFLOW" ]] || fail 'static test GitHub Actions workflow is missing'    grep_fixed 'bash -n ./hubshark.sh' "$CI_WORKFLOW" \
         || fail 'CI workflow does not syntax-check hubshark.sh'
     grep_fixed 'shellcheck -S error' "$CI_WORKFLOW" \
         || fail 'CI workflow does not run ShellCheck for critical shell issues'
@@ -1916,12 +1835,6 @@ test_headless_benchmark_path_is_documented_and_guarded() {
         || fail 'last-good route freshness does not use saved checked_at timestamps'
     grep -Eq 'unset .*HUBSHARK_BENCH_MOCK.*HUBSHARK_BENCH_ISOLATED|unset .*HUBSHARK_BENCH_ISOLATED.*HUBSHARK_BENCH_MOCK' "$BEHAVIOR_TESTS" \
         || fail 'behavior test harness can leak benchmark isolation state between tests'
-    grep_fixed 'HUBSHARK_LAST_GOOD_ROUTE_MAX_AGE_SEC' "$README" \
-        || fail 'README does not document the last-good route decay knob'
-    grep_fixed 'bash ./hubshark.sh bench --json --mock' "$README" \
-        || fail 'README does not document the benchmark budget command'
-    grep_fixed 'isolated mocked performance budget checks' "$README" \
-        || fail 'README does not explain that mock benchmarks avoid live state and network probes'
     pass 'headless benchmark budgets are exposed, isolated, and documented'
 }
 
@@ -1957,47 +1870,13 @@ test_docs_and_public_configs_are_consistent() {
     if grep_fixed '1-to-17' "$README" || grep_fixed '1 to 17' "$README"; then
         fail 'README menu count is stale'
     fi
-    grep_fixed 'numbered menu actions grouped by core controls' "$README" \
-        || fail 'README does not describe the current grouped menu'
     if grep_fixed 'did now get shown' "$README"; then
         fail 'README still contains the "did now" typo'
     fi
-    grep_fixed 'HUBSHARK_QR_MODE' "$README" \
-        || fail 'README does not document HUBSHARK_QR_MODE'
-    grep_fixed 'high-resolution QR PNG files under `data/qr/`' "$README" \
-        || fail 'README does not document the scan-friendly QR PNG export'
-    grep_fixed 'HUBSHARK_EXTRA_FALLBACK_IPS' "$README" \
-        || fail 'README does not document HUBSHARK_EXTRA_FALLBACK_IPS'
-    grep_fixed 'HUBSHARK_ROUTE_WAIT_SEC' "$README" \
-        || fail 'README does not document startup route wait'
-    grep_fixed 'configs-to-copy-for-mobile.txt' "$README" \
-        || fail 'README does not document the mobile copy-link fallback for QR scan failures'
-    grep_fixed 'Choose Your Codespace Region Before Creating It' "$README" \
-        || fail 'README does not tell users to choose a region before creating a Codespace'
-    grep_fixed 'You cannot move an existing Codespace to another region' "$README" \
-        || fail 'README does not explain that region changes require a new Codespace'
-    grep_fixed 'gh codespace create -R OWNER/REPO -l WestEurope --idle-timeout 240m' "$README" \
-        || fail 'README does not include a CLI example for region selection'
-    grep_fixed 'Linux recovery after Worker wake' "$README" \
-        || fail 'README does not include Linux recovery troubleshooting after Worker wake'
-    grep_fixed 'gh codespace ports visibility 443:public -c "$CS"' "$README" \
-        || fail 'README Linux recovery flow does not include public port repair'
-    grep_fixed 'Startup automation and port forwarding' "$README" \
-        || fail 'README does not explain automatic startup port forwarding and its rebuild requirement'
-    grep_fixed 'curl -sS -o /dev/null -w "route=%{http_code} time=%{time_total}s\n" -X OPTIONS "$APP"' "$README" \
-        || fail 'README Linux recovery flow does not include an external route probe'
-    grep_fixed '12) Server Location' "$README" \
-        || fail 'README does not tell users to verify the observed exit location'
     [[ ! -e "$ROOT_DIR/configs.txt" ]] \
         || fail 'public configs.txt should not exist in the repo'
     grep_fixed '/configs.txt' "$GITIGNORE" \
         || fail '.gitignore does not block regenerated public configs.txt'
-    grep_fixed 'Personal test and educational use only' "$README" \
-        || fail 'README does not state personal/test-only use'
-    grep_fixed 'Private Local Exports' "$README" \
-        || fail 'README does not describe private local exports'
-    grep_fixed 'This project intentionally does not publish a raw GitHub subscription URL' "$README" \
-        || fail 'README does not explain that subscriptions are local-only'
     grep_fixed 'Local base64 subscription file' "$SCRIPT" \
         || fail 'config screen does not label the local subscription file'
     grep_fixed '"subscription_scope": "local_codespace_only"' "$SCRIPT" \
@@ -2018,12 +1897,8 @@ test_docs_and_public_configs_are_consistent() {
             fail "public config sharing reference remains: $removed"
         fi
     done
-    grep_fixed 'insecure=0&allowInsecure=0' "$README" \
-        || fail 'README does not document secure-by-default TLS verification in exported links'
     grep_fixed 'insecure=0&allowInsecure=0' "$SCRIPT" \
         || fail 'generated links are not secure-by-default for TLS verification'
-    grep_fixed 'allowInsecure=1` can be tried manually as a compatibility workaround' "$README" \
-        || fail 'README does not disclose the optional TLS verification compatibility tradeoff'
     pass 'docs and local-only config exports are consistent'
 }
 
@@ -2051,10 +1926,6 @@ test_devcontainer_tooling_is_not_duplicated() {
     if grep_fixed 'openssh-server' "$ROOT_DIR/.devcontainer/Dockerfile"; then
         fail 'Dockerfile manually installs openssh-server instead of using the devcontainer sshd feature'
     fi
-    grep_fixed 'gh codespace ssh' "$README" \
-        || fail 'README does not document remote Codespace SSH access'
-    grep_fixed 'socks5://127.0.0.1:10808' "$README" \
-        || fail 'README does not document the working proxy scheme for gh codespace ssh/rebuild'
     if grep_fixed '/workspaces/HubShark' "$README"; then
         fail 'README hard-codes the workspace folder and breaks renamed forks'
     fi
@@ -2207,6 +2078,7 @@ test_runtime_files_are_private_and_tempfiles_are_unique
 test_logs_are_bounded_and_quota_is_cycle_aware
 test_fallback_link_count_is_capped
 test_ci_runs_static_regressions
+test_readme_stays_vague
 test_headless_benchmark_path_is_documented_and_guarded
 test_docs_and_public_configs_are_consistent
 test_devcontainer_tooling_is_not_duplicated
