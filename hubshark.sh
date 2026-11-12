@@ -22,7 +22,7 @@ detect_project_repo_default() {
             return 0
         fi
     done
-    printf 'Code-Leafy/HubShark\n'
+    printf 'musesullivan/HubShark\n'
 }
 
 PROJECT_REPO="${HUBSHARK_PROJECT_REPO:-$(detect_project_repo_default)}"
