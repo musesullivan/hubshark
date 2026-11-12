@@ -1750,7 +1750,8 @@ test_readme_stays_vague() {
 }
 
 test_ci_runs_static_regressions() {
-    [[ -f "$CI_WORKFLOW" ]] || fail 'static test GitHub Actions workflow is missing'    grep_fixed 'bash -n ./hubshark.sh' "$CI_WORKFLOW" \
+    [[ -f "$CI_WORKFLOW" ]] || fail 'static test GitHub Actions workflow is missing'
+    grep_fixed 'bash -n ./hubshark.sh' "$CI_WORKFLOW" \
         || fail 'CI workflow does not syntax-check hubshark.sh'
     grep_fixed 'shellcheck -S error' "$CI_WORKFLOW" \
         || fail 'CI workflow does not run ShellCheck for critical shell issues'
